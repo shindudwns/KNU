@@ -1,1 +1,1064 @@
+#include<iostream>
+#include<Windows.h>
+#include<ctime>
+#include<conio.h>
+#include<cstdlib>
+
+using namespace std;
+//오늘은 퀸맥을 짜 볼 것입니다.
+int group[20][5][99][4][20] = { 0, };//배열 group[단계][1의개수별 그룹][그룹원들][이진법][1-16십진수 17 중복인지 18 사용했는지19]
+int k, j, i, m, l, p, v, r, h, w;//fOr문을 돌리기 위한 변수
+int sc[16];//입력값 받는 배열
+int fn[16][4];//이진값 저장 배열
+int n[4];//이진법 변환을 위한 임시 배열
+int t;// pi돌릴지 말지 결정 변수
+int key[20] = { 0, };
+int g[5];
+int gg, b;
+int stage;
+int st, st1, st2, st3, st4, st5,stop;
+int tn = 1;
+int map[16][16] = { 99, };
+int piq[16][16];//pi저장 함수;
+int pin[16][4];//pi 2진수 저장함수 
+int fstage;//몇까지 돌릴지 결정하는 변수
+
+int print()//이진수 출력후 입력 값 받기 후 사용값 표시
+{
+	cout << endl << " A B C D                                                     X" << endl;
+	for (i = 0; i < 16; i++)
+	{
+		cout << endl;
+		k = i;//임시 10진수 K
+		for (j = 3; j > -1; j--)// 10진수에서 2진수로 계산 과정
+		{
+			n[j] = 0;
+			n[j] = k % 2;
+			k = k / 2;
+		}
+		for (j = 0; j < 4; j++)
+		{
+			fn[i][j] = n[j];//2진수 값 저장
+			cout << " " << fn[i][j];
+		}
+		if (i < 10)
+		{
+			cout << "  ( " << i << ")";
+		}
+		else
+		{
+			cout << "  (" << i << ")";
+		}
+		cout << "를 사용하시겠습니까?  (1/사용 0/미사용)        ";
+		cin >> sc[i];
+	}
+	cout << endl << endl << endl << " A B C D" << endl << "------------------ 선택한 수들 ------------------" << endl;
+	for (i = 0; i < 16; i++)
+	{
+		if (sc[i] == 1)
+		{
+			for (j = 0; j < 4; j++)
+			{
+				cout << " " << fn[i][j];
+			}
+			cout << "  (" << i << ")";
+			cout << endl;
+		}
+	}
+	return 0;
+}
+int print0()
+{
+	cout << endl << " A B C D                                                     X" << endl<<endl;
+	for (i = 0; i < 16; i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			cout << " " << fn[i][j];
+		}
+		if (i < 10)
+		{
+			cout << "  ( " << i << ")";
+		}
+		else
+		{
+			cout << "  (" << i << ")";
+		}
+		cout << "를 사용하시겠습니까?  (1/사용 0/미사용)        ";
+		cout << sc[i];
+		cout << endl<<endl;
+	}
+	cout << endl << endl << endl << " A B C D" << endl << "------------------ 선택한 수들 ------------------" << endl;
+	for (i = 0; i < 16; i++)
+	{
+		if (sc[i] == 1)
+		{
+			for (j = 0; j < 4; j++)
+			{
+				cout << " " << fn[i][j];
+			}
+			cout << "  (" << i << ")";
+			cout << endl;
+		}
+	}
+	return 0;
+}
+int stac()// 그룹별 스택 쌓기
+{
+	for (j = 0; j < 4; j++)
+	{
+		if (fn[k][j] == 1)
+		{
+			st++;
+		}
+	}
+	return 0;
+}
+int g2()
+{
+	for (j = 0; j < 4; j++)
+	{
+		group[stage][st][g[st]][j][0] = fn[k][j];
+		group[stage][st][g[st]][j][1] = k;
+		group[stage][st][g[st]][j][18] = 1;
+		group[stage][st][g[st]][j][17] = 0;
+	}g[st]++;
+	return 0;
+}
+int print3()
+{
+	for (k = 0; k < 5; k++)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			for (j = 0; j < 4; j++)
+			{
+				cout << " " << group[stage][k][i][j][0];
+				if (j == 3)
+				{
+					cout << "  (" << group[stage][k][i][j][1] << ")" << endl;
+				}
+			}
+		}
+		if (group[stage][k][i][j][1] != 0 || sc[0] == 1)
+		{
+			cout << endl;
+		}
+	}
+	return 0;
+}
+int print2()//그룹별 프린팅
+{
+	cout << endl << endl << endl << endl << endl << endl << endl << "------------------ (그룹나누기) ------------------ " << endl << endl << endl << endl << endl << " A B C D";
+	g[0] = 0;
+	for (k = 0; k < 5; k++)
+	{
+		cout << endl << "----------------- 1이 " << g[0] << "개인 그룹 -----------------" << endl;
+		for (i = 0; i < 6; i++)
+		{
+			if (group[stage][k][i][0][1] != 99)
+			{
+				for (j = 0; j < 4; j++)
+				{
+					cout << " " << group[stage][k][i][j][0];
+					if (j == 3)
+					{
+						cout << "  (" << group[stage][k][i][j][1] << ")" << endl;
+					}
+				}cout << endl;
+			}
+
+		}
+		g[0]++;
+	}
+	return 0;
+}
+int print4()// Pi 프린팅 함수
+{
+	if (v == 1)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			group[stage][0][0][j][0] = 0;
+			group[stage][0][0][j][1] = 0;
+			group[stage][0][0][j][18] = 1;
+			group[stage][0][0][j][17] = 0;
+		}
+	}
+	g[0] = 0;
+	cout << endl << endl << endl << endl << endl << endl << endl << "----------------- (" << stage << "차 pi추출값) -----------------" << endl << endl << endl << endl << endl << " A B C D";
+	for (k = 0; k < 5; k++)
+	{
+		cout << endl << "----------------- 1이 " << g[0] << "개인 그룹 -----------------" << endl;
+		for (i = 0; i < 99; i++)
+		{
+			st5 = 0;
+			for (j = 0; j < 4; j++)
+			{
+				if (group[stage][k][i][j][0] == 0)
+				{
+					st5++;
+				}
+			}
+			if (st5 != 4)
+			{
+				for (j = 0; j < 4; j++)
+				{
+
+					if (group[stage][k][i][j][18] != 0)
+					{
+						if (group[stage][k][i][j][0] == 2)
+						{
+							cout << " -";
+						}
+						else
+						{
+							cout << " " << group[stage][k][i][j][0];
+						}
+						if (j == 3)
+						{
+							cout << "  (";
+							for (m = 1; m < 16; m++)
+							{
+								if (group[stage][k][i][0][m] != 99)
+								{
+									cout << " " << group[stage][k][i][0][m];
+									if (group[stage][k][i][0][m + 1] != 99)
+									{
+										cout << ",";
+									}
+								}
+							}
+							cout << " )";
+						}
+					}
+				}cout << endl;
+
+			}
+			else if (st5 == 4)
+			{
+				if (k == 0 && i == 0)
+				{
+					if (group[stage][0][0][0][1] == 0 && v == 1)
+					{
+						for (j = 0; j < 4; j++)
+						{
+							cout << " 0";
+							if (j == 3)
+							{
+								cout << "  (";
+								cout << " " << group[stage][k][i][0][1];
+								cout << " )";
+							}
+						}
+					}
+				}
+				else
+				{
+					for (m = 1; m < 17; m++)
+					{
+						for (j = 0; j < 4; j++)
+						{
+							group[stage][k][i][j][m] = 99;
+						}
+					}
+				}
+			}
+		}cout << endl; g[0]++;
+	}
+	return 0;
+}
+int g1()//그룹나누기 후 프린팅
+{
+	stage = 0;//0단계
+	for (int s = 0; s < 20; s++) // 10진수 저장값은 99로 초기화 시키기.
+	{
+		for (k = 0; k < 5; k++)
+		{
+			for (i = 0; i < 12; i++)
+			{
+				for (j = 0; j < 4; j++)
+				{
+					for (m = 1; m < 17; m++)
+					{
+						group[s][k][i][j][m] = 99;
+					}
+
+				}
+			}
+		}
+	}
+	cout << endl << endl << endl << endl << endl << endl << endl << "------------------ (그룹나누기) ------------------ " << endl << endl << endl << endl << endl << " A B C D";
+	for (k = 0; k < 16; k++)
+	{
+		st = 0;
+		if (sc[k] == 1)
+		{
+			stac(); // 1의개수 스택쌓기로 분류함
+			if (st == 0)//1의 개수 별로 이제 Group 배열에 이진수값과 십진수 값 부여.
+			{
+				g2();
+			}
+			else if (st == 1)
+			{
+				g2();
+			}
+			else if (st == 2)
+			{
+				g2();
+			}
+			else if (st == 3)
+			{
+				g2();
+			}
+			else if (st == 4)
+			{
+				g2();
+			}
+		}
+	}
+	print2();
+	return 0;
+}
+int stac2()// 첫번째 Pi 스택 쌓기
+{
+	st = 0; st1 = 0; g[2] = 0; st2 = 0;
+	for (j = 0; j < 4; j++)
+	{
+		if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+		{
+			st++;
+		}
+		if (group[stage - 1][k][i][j][0] == 0)
+		{
+			st1++;
+		}
+		if (group[stage - 1][k + 1][m][j][0] == 0)
+		{
+			st2++;
+		}
+		if (st == 4)//0000 방지
+		{
+			g[1] = 1;
+		}
+		else if (st == 3) // Pi 발견하면 구현 안되기위함. 
+		{
+			g[0] = 1;
+		}
+		if (st1 == 4 || st2 >= 3)
+		{
+			g[2] = 1;
+		}
+	}return 0;
+}
+int npt()//중복값제거 함수
+{
+	for (k = 0; k < 5; k++)//중복값 제거
+	{
+		for (i = 0; i < 99; i++)
+		{
+			for (m = 0; m < 99; m++)
+			{
+				st1 = 0;
+				for (p = 0; p < 4; p++)
+				{
+					for (j = 2; j < 17; j++)
+					{
+						if (group[stage][k][i][p][j] == 0)
+							group[stage][k][i][p][j] = 99;
+					}
+				}
+				for (j = 0; j < 4; j++)
+				{
+					if (group[stage][k][i][j][0] == group[stage][k][m][j][0] && i != m)
+					{
+						st1++;
+					}
+					if (j == 3)
+					{
+						if (st1 == 4)
+						{
+							for (p = 0; p < 4; p++)
+							{
+								group[stage][k][m][p][0] = 0;
+								group[stage][k][m][p][18] = 99;
+								for (l = 0; l < 2 * tn; l++)
+								{
+									group[stage][k][m][p][l + 1] = 99;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
+int pi()//PI추출하는 부함수
+{//gg=사용하는 그룹원수 증가  g[0]= pi 발견되면 중복안되기 위해 중단 g[1]=0000방지 g[2]=세번째그룹에서 0이 세개이상 인식되면 중단
+	stage++;
+	t = 0;
+	for (k = 0; k < 5; k++)
+	{
+		gg = 0;
+		for (i = 0; i < 16; i++)
+		{
+			g[0] = 0;
+			if (sc[0] == 1 && k == 0 && i < 4)
+			{
+				r = 0;
+				g[1] = 0;
+				for (m = 0; m < 6; m++)
+				{
+					st = 0;
+					if (group[stage - 1][k + 1][m][0][18] != 99)
+					{
+						for (j = 0; j < 4; j++)
+						{
+							if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+							{
+								st++;
+							}
+							if (st == 3)
+							{
+								r++;// pi없으면 스킵하기 위한 스택 쌓기
+							}
+							if (st == 4)
+							{
+								r--;
+							}
+						}
+					}
+				}
+				for (m = 0; m < 6; m++)
+				{
+					st = 0;
+					stac2();
+					if (st == 3 && r != 0)
+					{
+						t++;
+						for (j = 0; j < 4; j++)
+						{
+							if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][i][j][0])
+							{
+								group[stage][k][gg][j][0] = group[stage - 1][k + 1][i][j][0];
+							}
+							else
+							{
+								group[stage][k][gg][j][0] = 2;
+							}
+							group[stage][k][gg][j][1] = 0;
+							group[stage][k][gg][j][2] = group[stage - 1][k + 1][i][0][1];
+							group[stage][k][gg][j][18] = 2;
+							group[stage][k][gg][j][17] = 0;
+						}
+						gg++;
+					}
+					else if (r == 0)
+					{
+						v = 1;//pi가없을때 데려가기위한 표시
+						for (j = 0; j < 4; j++)
+						{
+							group[stage][0][0][j][0] = 0;
+							group[stage][0][0][j][1] = 0;
+							group[stage][0][0][j][18] = 1;
+							group[stage][0][0][j][17] = 0;
+						}
+						r++; gg++;
+					}
+				}
+
+			}
+			else if (k == 1)
+			{
+				g[1] = 0; g[2] = 0;
+				for (m = 0; m < 12; m++)
+				{
+					stac2();
+					if (st == 3)
+					{
+						g[0]++;// pi없으면 스킵하기 위한 스택 쌓기
+					}
+				}
+				for (m = 0; m < 12; m++)
+				{
+					g[1] = 0; g[2] = 0;
+					stac2();
+					if (st == 3 && g[1] != 1 && g[2] != 1)
+					{
+						if (g[0] != 0)
+						{
+							for (j = 0; j < 4; j++)
+							{
+								if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+								{
+									group[stage][k][gg][j][0] = group[stage - 1][k + 1][m][j][0];
+								}
+								else
+								{
+									group[stage][k][gg][j][0] = 2;
+								}
+								group[stage][k][gg][j][1] = group[stage - 1][k][i][0][1];
+								group[stage][k][gg][j][2] = group[stage - 1][k + 1][m][0][1];
+								group[stage][k][gg][j][18] = 2;
+								group[stage][k][gg][j][17] = 0;
+							}
+						}
+						gg++;
+					}
+					else if (st < 3 && g[0] == 4)
+					{
+						for (j = 0; j < 4; j++)
+						{
+							group[stage][k][gg][j][0] = group[stage - 1][k][i][j][0];
+							group[stage][k][gg][j][1] = group[stage - 1][k][i][j][1];
+							group[stage][k][gg][j][18] = 1;
+							group[stage][k][gg][j][17] = 0;
+						}
+						g[0]++; gg++;
+					}
+				}
+			}
+			else if (k == 4)
+			{
+				w = 0;
+				for (l = 0; l < 6; l++)
+				{
+					if (group[stage - 1][k - 1][l][0][18] == 1)
+					{
+						w++;
+					}
+				}
+				if (w == 0)
+				{
+					for (j = 0; j < 4; j++)
+					{
+						group[stage][k][gg][j][0] = group[stage - 1][k][i][j][0];
+						group[stage][k][gg][j][1] = group[stage - 1][k][i][j][1];
+						group[stage][k][gg][j][18] = 1;
+						group[stage][k][gg][j][17] = 0;
+					}gg++; g[0]++;
+				}
+			}
+			else if (k > 1)
+			{
+				st3 = 0; g[3] = 0;
+				for (l = 0; l < 4; l++)
+				{
+					if (group[stage - 1][k][i][l][0] == 0)
+					{
+						st3++;
+					}
+					if (st3 >= 3)
+					{
+						g[3] = 1;
+					}
+				}
+				g[1] = 0; g[2] = 0;
+				for (m = 0; m < 12; m++)
+				{
+					stac2();
+					if (st == 3)
+					{
+						t++;
+						g[0]++;// pi없으면 스킵하기 위한 스택 쌓기
+					}
+				}
+				for (m = 0; m < 12; m++)
+				{
+					g[1] = 0; g[2] = 0;
+					stac2();
+					if (st == 3 && g[1] != 1 && g[2] != 1 && g[3] == 0)
+					{
+						t++;
+						if (g[0] != 0)
+						{
+							for (j = 0; j < 4; j++)
+							{
+								if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+								{
+									group[stage][k][gg][j][0] = group[stage - 1][k + 1][m][j][0];
+								}
+								else
+								{
+									group[stage][k][gg][j][0] = 2;
+								}
+								group[stage][k][gg][j][1] = group[stage - 1][k][i][0][1];
+								group[stage][k][gg][j][2] = group[stage - 1][k + 1][m][0][1];
+								group[stage][k][gg][j][18] = 2;
+								group[stage][k][gg][j][17] = 0;
+							}gg++;
+						}
+					}
+					else if (st < 3 && g[0] == 0)
+					{
+						h = 0;
+						for (l = 0; l < 12; l++)
+						{
+							st1 = 0;
+							for (j = 0; j < 4; j++)
+							{
+								if (group[stage - 1][k][i][j][0] == group[stage - 1][k - 1][l][j][0])
+								{
+									st1++;
+								}
+							}
+							if (st1 == 3)
+							{
+								h = 1;
+							}
+						}
+						if (h == 0)
+						{
+
+							for (j = 0; j < 4; j++)
+							{
+								group[stage][k][gg][j][0] = group[stage - 1][k][i][j][0];
+								group[stage][k][gg][j][1] = group[stage - 1][k][i][j][1];
+								group[stage][k][gg][j][18] = 1;
+								group[stage][k][gg][j][17] = 0;
+							}gg++; g[0]++;
+						}
+					}
+				}
+			}
+		}
+	}
+	npt();
+	return 0;
+}
+int pi2()//순환 PI 계산기 더이상 없을시에 안 돌림.
+{
+	t = 0;
+	//group[20][5][99][4][20] = { 0, };//배열 group[단계][1의개수별 그룹][그룹원들][이진법][1-16십진수 17 중복인지 18 사용했는지19]
+	//gg=사용하는 그룹원수 증가  g[0]= pi 발견되면 중복안되기 위해 중단 g[1]=0000방지 g[2]=세번째그룹에서 0이 세개이상 인식되면 중단 g[3]= 0이 3개이상일떄 발생 g[4] =  원래값저장
+	stage++;
+	tn = 1;
+	for (i = 0; i < stage - 1; i++)//tn값 으로 십진수 갯수 분류
+	{
+		tn = tn * 2;
+	}
+	for (k = 0; k < 4; k++)//  중복값 초기화
+	{
+		for (i = 0; i < 99; i++)
+		{
+			for (j = 0; j < 4; j++)
+			{
+				group[stage - 1][k][i][j][17] = 0;
+			}
+		}
+	}
+	for (k = 0; k < 5; k++)
+	{
+		gg = 0;
+		for (i = 0; i < 99; i++)
+		{
+			if (group[stage - 1][k][i][0][18] > 0)
+			{
+				if (group[stage - 1][k][i][0][18] == stage)//pi검사해야 되는 구문용
+				{
+					g[0] = 0;
+					for (m = 0; m < 99; m++)
+					{
+						if (group[stage - 1][k + 1][m][0][18] == stage)
+						{
+							st1 = 0;
+							for (j = 0; j < 4; j++)
+							{
+								if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+								{
+									st1++;
+								}
+							}
+							if (st1 == 3)
+							{
+								g[0] = 1;
+							}
+						}
+					}
+					if (g[0] == 0 && group[stage][k][i][0][17] != 1)//pi가 없다는 뜻  원래 값 저장
+					{
+						for (j = 0; j < 4; j++)
+						{
+							group[stage][k][gg][j][0] = group[stage - 1][k][i][j][0];
+							group[stage][k][gg][j][18] = group[stage - 1][k][i][j][18];
+							for (l = 0; l < 16; l++) //기존 십진수 값들 저장함
+							{
+								group[stage][k][gg][j][l + 1] = group[stage - 1][k][i][0][l + 1];
+							}
+						}
+						gg++;
+					}
+					else if (g[0] != 0)
+					{
+						for (m = 0; m < 99; m++)
+						{
+							if (group[stage - 1][k + 1][m][0][18] == stage)
+							{
+								st1 = 0;
+								for (j = 0; j < 4; j++)
+								{
+									if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+									{
+										st1++;
+									}
+								}
+								if (st1 == 3)
+								{
+									t++;
+									for (j = 0; j < 4; j++)
+									{
+										if (group[stage - 1][k][i][j][0] == group[stage - 1][k + 1][m][j][0])
+										{
+											group[stage][k][gg][j][0] = group[stage - 1][k + 1][m][j][0];
+										}
+										else
+										{
+											group[stage][k][gg][j][0] = 2;
+										}
+										g[4] = 1;
+										for (l = 0; l < 2 * tn; l++) // 기존과 새로운 10진수 수들 저장
+										{
+											if (l < tn) //기존 십진수 값들 저장
+											{
+												group[stage][k][gg][j][l + 1] = group[stage - 1][k][i][j][g[4]];
+												g[4]++;
+											}
+											else if (l == tn) //새로운 십진수 값들 저장
+											{
+												g[4] = 1;
+												group[stage][k][gg][j][l + 1] = group[stage - 1][k + 1][m][j][g[4]];
+
+												g[4]++;
+											}
+											else     // ""
+											{
+												group[stage][k][gg][j][l + 1] = group[stage - 1][k + 1][m][j][g[4]];
+
+												g[4]++;
+											}
+										}
+										for (l = 2 * tn; l < 16; l++)//쓰레깃값 제거
+										{
+											group[stage][k][gg][j][l + 1] = 99;
+										}
+										group[stage][k + 1][m][j][17] = 1;
+										group[stage][k][gg][j][18] = stage + 1;
+									}
+									gg++;
+								}
+							}
+
+						}t++;// pi만들었으므로 이번 단계 진행함
+					}
+				}
+				else if (group[stage - 1][k][i][0][18] < stage)
+				{
+					for (j = 0; j < 4; j++)
+					{
+						group[stage][k][gg][j][0] = group[stage - 1][k][i][j][0];
+						group[stage][k][gg][j][18] = group[stage - 1][k][i][j][18];
+						for (l = 0; l < 16; l++) //기존 십진수 값들 저장함
+						{
+							group[stage][k][gg][j][l + 1] = group[stage - 1][k][i][j][l + 1];
+						}
+					}
+					gg++;
+				}
+			}
+		}
+	}
+	npt();
+	return 0;
+}
+int graph()//숫자 나열 먼저
+{
+	cout << endl << endl << "------------------------표------------------------"<<endl<<endl;
+	for (i = 0; i < 16; i++) //99 모두 로 초기화
+	{
+		for (j = 0; j < 16; j++)
+		{
+			map[i][j] = 99; //표 그리는 맵 초기화
+			piq[i][j] = 99; //pi 저장 함수 초기화
+		}
+	}
+	gg = 0;
+	for (i = 0; i < 16; i++) // 맵 맨윗줄 사용하는 수 저장
+	{
+		if (sc[i] == 1)
+		{
+			piq[0][gg] = i;
+			map[0][gg] = i;
+			gg++;
+		}
+	}
+	g[2] = 0;
+	for (k = 0; k < 5; k++)//piq배열과 pin배열에 값 집어넣기 
+	{
+		for (i = 0; i < 99; i++)
+		{
+			if (v == 1 && k == 0 && i == 0)
+			{
+				g[2]++;
+				piq[g[2]][g[3]] = 0;
+				for (j = 0; j < 4; j++)
+				{
+					pin[g[2]][j] = 0;
+				}
+			}
+			if (group[stage][k][i][0][18] != 99)
+			{
+				for (j = 0; j < 4; j++)
+				{
+					if (j == 0)
+					{
+						g[2]++;
+						g[3] = 0;
+					}
+					pin[g[2]][g[3]] = group[stage][k][i][j][0];
+					g[3]++;
+				}
+				for (j = 1; j < 17; j++)
+				{
+					if (group[stage][k][i][0][j] != 99)
+					{
+						if (j == 1)
+						{
+							g[3] = 0;
+						}
+						piq[g[2]][g[3]] = group[stage][k][i][0][j];
+						g[3]++;
+					}
+				}
+			}
+		}
+	}
+	g[2] += 1;
+	for (k = 1; k < g[2]; k++)//map에 piq 비교해서 값 넣어주기
+		for (j = 0; j < gg; j++)
+			for (i = 0; i < gg; i++)
+				if (piq[0][i] == piq[k][j] && piq[k][j] != 99)
+					map[k][i] = 1;
+	int arr[16] = { 0, };//세로 갯수 저장 배열 
+	for (i = 1; i < g[2]; i++)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] == 1)
+				arr[j] += 1;
+	for (i = 1; i < g[2]; i++) // 1차 Pi 추후출 //1단계
+		for (j = 0; j < gg; j++)
+			if (arr[j] == 1 && map[i][j] == 1)
+				map[i][j] = 2;
+	int arr2[16] = { 0, };//가로 갯수 저장 배열
+	for (i = 1; i < g[2]; i++) // 1차 Pi줄 dead 처리 //2단계-1 (가로줄 지울꺼 저장)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] == 2)
+				arr2[i] = 1;
+	for (i = 1; i < g[2]; i++) // 1차 Pi줄 dead 처리 //2단계-1 (가로줄 지우는 과정)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] != 99)
+				if (arr2[i] == 1)
+					if (map[i][j] != 2)
+						map[i][j] = 3;
+	int arr3[16] = { 0, };
+	for (i = 1; i < g[2]; i++) // 1차 Pi줄 dead 처리 //2단계-2 (세로줄 지울꺼 저장)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] != 99)
+				if (map[i][j] != 1)
+					arr3[j] = 1;
+	for (i = 1; i < g[2]; i++) // 1차 Pi줄 dead 처리 //2단계-2 세로줄 지우는 과정)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] != 99)
+				if (arr3[j] == 1)
+					if (map[i][j] == 1)
+						map[i][j] = 3;
+	int arr4[16] = { 0, };//pi출력 배열
+	for (i = 1; i < g[2]; i++) {// 숨은 Pi 추출 //3단계-2 살아남아있는 줄 탐색)
+		for (j = 0; j < gg; j++) {
+			if (map[i][j] != 99)
+				if (map[i][j] != 1)
+					arr4[i] = 1;
+		}
+		if (arr4[i] == 0) {//숨은 Pi 추출 //3단계-3 살아남아있는 줄 4로 바꿔줌
+			for (j = 0; j < gg; j++)
+				if (map[i][j] != 99)
+					map[i][j] = 4;
+		}
+	}
+	w = 0;//최댓값 pi의
+	for (i = 1; i < g[2]; i++) // 최종 PI 출력 //3단계-2 살아남아있는 줄 탐색)
+		for (j = 0; j < gg; j++)
+			if (map[i][j] == 2 || map[i][j] == 4)
+			{
+				arr4[i] = 2;
+				w = i;
+			}
+	//  o=(살아남은 자들) p=(1차 Pi) x=(dead 표시)
+	cout << endl;
+	for (i = 0; i < g[2]; i++) /// 표 그리기 담당
+	{
+		for (j = 0; j < 2 * gg; j++)
+		{
+			if (j < gg)
+			{
+				if (i == 0)
+				{
+					if (map[0][j] < 10)
+						cout << " " << map[i][j] << " ";
+					else
+						cout << " " << map[i][j];
+				}
+				else
+				{
+					if (map[i][j] == 99)
+						cout << "   ";
+					else if (map[i][j] == 1)
+						cout << " o ";
+					else if (map[i][j] == 2)
+						cout << " p ";
+					else if (map[i][j] == 3)
+						cout << " x ";
+					else if (map[i][j] == 4)
+						cout << " O ";
+				}
+			}
+			else
+			{
+				if (piq[i][j - gg] != 99 && i != 0)
+				{
+					if (j == gg)
+					{
+						for (m = 0; m < 4; m++)
+						{
+							if (pin[i][m] != 2)
+								cout << pin[i][m];
+							else
+								cout << "-";
+						}
+					}
+					if (piq[i][j - gg + 1] != 99)
+					{
+						if (j == gg)
+							cout << " (" << piq[i][j - gg] << ",";
+						else
+							cout << piq[i][j - gg] << ",";
+					}
+					else
+					{
+						if (j == gg)
+							cout << " (" << piq[i][j - gg] << ")";
+						else
+							if (piq[i][j - gg] == 0)
+								cout << "0000 (" << piq[i][j - gg] << ")";
+							else
+								cout << piq[i][j - gg] << ")";
+					}
+				}
+			}
+		}cout << endl;
+	}
+	cout <<endl<<endl<< " o=(살아남은 자들) p=(1차 Pi) x=(dead 표시) O=(숨은 pi)"<<endl<<endl<<endl;
+	cout << endl << "최종  pi 값은 아래와 같습니다." << endl<<endl << "F = ";
+	for (i = 1; i < g[2]; i++)
+	{
+		if (arr4[i] == 2)
+		{
+			for (j = 0; j < 4; j++)
+			{
+				if (j == 0)
+				{
+					if (pin[i][j] == 0)
+						cout << "A'";
+					else if (pin[i][j] == 1)
+						cout << "A";
+				}
+				else if (j == 1)
+				{
+					if (pin[i][j] == 0)
+						cout << "B'";
+					else if (pin[i][j] == 1)
+						cout << "B";
+				}
+				else if (j == 2)
+				{
+					if (pin[i][j] == 0)
+						cout << "C'";
+					else if (pin[i][j] == 1)
+						cout << "C";
+				}
+				else if (j == 3)
+				{
+					if (pin[i][j] == 0)
+						cout << "D'";
+					else if (pin[i][j] == 1)
+						cout << "D";
+					if (i != w)
+						cout << "+";
+				}
+			}
+		}
+	}
+	cout << endl<<endl<<"-------------------------------------------------";
+	return 0;
+}
+int fcal() //pi추출 함수 몇까지 돌릴지 계산해주는 부함수.
+{
+	for (b = 0; b < 6; b++)
+	{
+		if (t == 0)
+		{
+			b = 99;
+			stage -= 1;
+			fstage = stage;
+		}
+		pi2();
+	}
+	stage = 1;
+	return 0;
+}
+int main()
+{
+	print();
+	g1();
+	pi();
+	fcal();
+	int ctl = 0;
+	b = 0;
+	while (1)
+	{
+		system("cls");
+		stage = 0;
+		print0();
+		print2();
+		stage = 1;
+		for (p = 0; p < b; p++)
+		{
+			print4();
+			stage++;
+		}
+		key[0] = _getch();
+		key[0] = _getch();
+		if (key[0] == 72)
+		{
+			if (b >0)
+			{
+				b--;
+				cout << "up";
+			}
+		}
+		else if (key[0] == 80)
+		{
+			if (b == fstage)
+			{
+				graph();
+				system("pause");
+			}
+			else
+			{
+				b++;
+				cout << "down";
+			}
+		}
+	}
+}
 
