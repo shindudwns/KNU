@@ -6,7 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 <script type="text/javascript">
     // More API functions here:
-    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/imagee
 
     // the link to your model provided by Teachable Machine export panel
     const URL = "./my_model/";
