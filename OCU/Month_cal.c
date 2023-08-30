@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include <stdlib.h> // 프로그램 종료시키는 함수를 쓰기위한 라이브러리
+#include <stdlib.h> // 프로그램 종료시키는함수를 쓰기위한 라이브러리
 
 int year = 2022, month = 1, day = 1, enter;
 
